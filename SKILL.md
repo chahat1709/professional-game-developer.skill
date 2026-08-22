@@ -103,12 +103,20 @@ Read only the references needed for the current task:
 - **Universal architecture (engine-agnostic):** [references/universal-architecture.md](references/universal-architecture.md)
 - **Engine selection matrix:** [references/engine-selection.md](references/engine-selection.md)
 - **Unreal architecture and input:** [references/unreal-architecture.md](references/unreal-architecture.md)
+- **Unity architecture (senior):** [references/unity-architecture.md](references/unity-architecture.md)
+- **Godot architecture (senior):** [references/godot-architecture.md](references/godot-architecture.md)
+- **Roblox architecture (senior):** [references/roblox-architecture.md](references/roblox-architecture.md)
 - **World building and streaming (universal + Unreal example):** [references/worldbuilding.md](references/worldbuilding.md)
 - **Assets, import, licensing, and materials:** [references/asset-pipeline.md](references/asset-pipeline.md)
 - **Gameplay systems and feature slices:** [references/gameplay-systems.md](references/gameplay-systems.md)
+- **Rendering & graphics (senior):** [references/rendering-graphics.md](references/rendering-graphics.md)
+- **Networking & multiplayer (senior):** [references/networking-multiplayer.md](references/networking-multiplayer.md)
+- **Production leadership (senior):** [references/production-leadership.md](references/production-leadership.md)
+- **Platform & performance mastery (senior):** [references/platform-mastery.md](references/platform-mastery.md)
 - **Testing, profiling, and packaging:** [references/quality-and-performance.md](references/quality-and-performance.md)
 - **DroneVerse-specific adaptation (Unreal example):** [references/droneverse-adaptation.md](references/droneverse-adaptation.md)
 - **Reusable project documents:** [references/templates.md](references/templates.md)
+- **Scripts (executable senior checks):** `scripts/validate-asset-manifest.py`, `scripts/quality-gate.py`
 
 ## Required milestone output
 
