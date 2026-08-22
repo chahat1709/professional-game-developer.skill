@@ -1,0 +1,24 @@
+{
+  "name": "professional-game-developer",
+  "version": "1.0.0",
+  "description": "Universal Professional Game Developer skill — Unreal, Unity, Godot, Roblox, Web — production workflow, senior patterns, executable quality gates.",
+  "author": {
+    "name": "chahat1709",
+    "url": "https://github.com/chahat1709"
+  },
+  "homepage": "https://github.com/chahat1709/professional-game-developer.skill",
+  "repository": "https://github.com/chahat1709/professional-game-developer.skill",
+  "license": "MIT",
+  "keywords": [
+    "game-development",
+    "unreal-engine",
+    "unity",
+    "godot",
+    "roblox",
+    "vertical-slice",
+    "senior"
+  ],
+  "skills": [
+    "./skills/engineering/professional-game-developer"
+  ]
+}

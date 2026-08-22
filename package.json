@@ -1,0 +1,20 @@
+{
+  "name": "professional-game-developer-skill",
+  "version": "1.0.0",
+  "description": "Universal Professional Game Developer skill for coding agents — Unreal, Unity, Godot, Roblox, Web",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chahat1709/professional-game-developer.skill"
+  },
+  "license": "MIT",
+  "keywords": [
+    "game-development",
+    "skill",
+    "claude-code",
+    "opencode",
+    "unreal-engine",
+    "unity",
+    "godot",
+    "roblox"
+  ]
+}
