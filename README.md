@@ -1,6 +1,8 @@
 # professional-game-developer — Complete Game Studio Multi-Disciplinary Engineering Skill
 
 [![skills.sh](https://skills.sh/b/chahat1709/professional-game-developer.skill)](https://skills.sh/chahat1709/professional-game-developer.skill)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Tests: Passing](https://img.shields.io/badge/Tests-8%20Passing-brightgreen.svg)](tests/test_scripts.py)
 
 A **Studio-Grade Game Development & Systems Engineering Skill** for AI coding agents (Claude Code, opencode, Cursor, Codex). It encapsulates the complete operational, architectural, and mathematical workflows of all **42 specialized job roles across 6 game studio departments**—enabling an agent to act as any specialist engineer, technical artist, designer, or complete lead entity across **Unreal Engine 5, Unity 6 (DOTS), Godot 4.3+, Roblox (Luau), and Web/Custom engines**.
 
@@ -81,11 +83,34 @@ skills/engineering/professional-game-developer/
     quality-gate.py                                   # Executable quality gate validator
 tests/
   test_scripts.py                                     # Unit test suite for validation tools
+.github/
+  ISSUE_TEMPLATE/                                     # Bug report & feature templates
+  pull_request_template.md                            # PR submission template
+CONTRIBUTING.md                                       # Contribution guidelines & standards
 ```
 
 ---
 
-## 3. Running Automated Verification
+## 3. Installation & Quick Start
+
+### Claude Code, Codex, and Agent Tools via skills.sh
+```bash
+npx skills@latest add chahat1709/professional-game-developer.skill
+```
+
+### Claude Code Plugin (Managed)
+```bash
+claude plugins add https://github.com/chahat1709/professional-game-developer.skill
+```
+
+### Direct Clone
+```bash
+git clone https://github.com/chahat1709/professional-game-developer.skill
+```
+
+---
+
+## 4. Running Automated Verification
 
 ```bash
 # Run automated test suite
@@ -100,6 +125,12 @@ python3 skills/engineering/professional-game-developer/scripts/quality-gate.py -
 
 ---
 
-## 4. License
+## 5. Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines, testing protocols, and reference standards.
+
+---
+
+## 6. License
 
 MIT — see [LICENSE](LICENSE).
