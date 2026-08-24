@@ -1,32 +1,51 @@
-# professional-game-developer — Universal Game Engineering Skill
+# professional-game-developer — Complete Game Studio Multi-Disciplinary Engineering Skill
 
 [![skills.sh](https://skills.sh/b/chahat1709/professional-game-developer.skill)](https://skills.sh/chahat1709/professional-game-developer.skill)
 
-A **Senior Production Game Developer & Systems Engineering Skill** for AI coding agents (Claude Code, opencode, Cursor, Codex). It provides production-grade architectural guidance, data-oriented design (DOD) principles, headless CLI automation toolchains, and multi-layer verification gates across **Unreal Engine 5, Unity 6 (DOTS), Godot 4.3+, Roblox (Luau), and Web/Custom engines**.
+A **Studio-Grade Game Development & Systems Engineering Skill** for AI coding agents (Claude Code, opencode, Cursor, Codex). It encapsulates the complete operational, architectural, and mathematical workflows of all **42 specialized job roles across 6 game studio departments**—enabling an agent to act as any specialist engineer, technical artist, designer, or complete lead entity across **Unreal Engine 5, Unity 6 (DOTS), Godot 4.3+, Roblox (Luau), and Web/Custom engines**.
 
 ---
 
-## 1. Full Multi-Disciplinary Engineering Coverage
+## 1. Complete Studio Department & Role Coverage (42 Roles)
 
-This skill covers every specialized engineering role in modern game development:
-
-- **LookDev, Color Science & Post-Processing:** ACEScg/OCIO color pipelines, AgX tonemapping, EV100 photometric lighting calibration, ASC-CDL color grading math, Karis average bloom, and Bokeh kernel physics.
-- **Advanced Physics & Numerical Simulation:** Semi-Implicit Euler, Verlet, RK4, Extended Position Based Dynamics (XPBD), Sequential Impulse constraint solving, Continuous Collision Detection (CCD / GJK / EPA), cloth/softbody constraints, and voxel water buoyancy.
-- **3D Asset Engineering & DCC Pipelines:** Quad topology & edge flow rules, MikkTSpace normal baking, texel density standardization ($10.24 - 20.48\text{ px/cm}$), UDIMs, twist-joint skin weighting, and Quadric Error Metric (QEM) LOD generation.
-- **Animation Engineering & Kinematics:** Inertialization blending vs. crossfading, Motion Matching with PCA pose database compression, Two-Bone IK, FABRIK, procedural Foot IK ground clamping, and animation curve quantization.
-- **Spatial Audio & Sound Design:** HRTF binaural rendering (ITD/ILD/Pinna), acoustic raymarching occlusion/diffraction, dynamic music state machines (horizontal re-sequencing & vertical layering), and DSP voice pooling.
-- **Multiplayer & Netcode:** Client-side prediction with ring buffers, server rollback reconciliation, lag-compensated hit history rewinding, bitpacked delta compression, and spatial interest management grids.
-- **Tools Engineering & Technical Direction:** Automated DCC asset ingestion daemons, Pixar Universal Scene Description (USD) pipelines, BC5/BC7/ASTC texture compression, and symbolicated crash telemetry.
+```
+┌──────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                            GAME STUDIO ORGANIZATIONAL TAXONOMY (42 ROLES)                        │
+├─────────────────────────┬─────────────────────────┬─────────────────────────┬────────────────────┤
+│ 1. Design (7 Roles)     │ 2. Engineering (12 Roles│ 3. Art & LookDev (11)   │ 4. Animation (4)   │
+│ • Creative Director     │ • Technical Director    │ • Art Director          │ • Lead Animator    │
+│ • Systems Designer      │ • Core Engine Dev       │ • Concept Artist        │ • MoCap Specialist │
+│ • Level Designer        │ • Graphics / Shader Dev │ • Environment Artist    │ • Technical Anim   │
+│ • Combat Designer       │ • Physics Engineer      │ • Character Artist      │ • Cinematic Director│
+│ • Narrative Designer    │ • Gameplay Dev          │ • Hard Surface Artist   ├────────────────────┤
+│ • Economy / Monetization│ • AI / Behavioral Dev   │ • Material / LookDev    │ 5. Audio (3 Roles) │
+│ • UX / UI Designer      │ • Netcode / Multiplayer │ • Lighting Artist       │ • Audio Director   │
+├─────────────────────────┤ • Audio Programmer      │ • Technical Artist (Sh) │ • Music Composer   │
+│ 6. Production & QA (5)  │ • Tools & Pipeline TD   │ • Rigging / Skinning TD │ • Tech Sound Des.  │
+│ • Technical Producer    │ • Build / CI/CD DevOps  │ • VFX / Niagara Artist  ├────────────────────┤
+│ • QA Lead / SDET        │ • Backend / LiveOps Dev │ • Technical UI Artist   │ 42 Disciplines     │
+│ • Compliance / Cert     │ • Anti-Cheat / Security │                         │ Total Matrix       │
+│ • Localization Lead     │                         │                         │                    │
+│ • Release Manager       │                         │                         │                    │
+└─────────────────────────┴─────────────────────────┴─────────────────────────┴────────────────────┘
+```
 
 ---
 
-## 2. Structure
+## 2. Directory Structure
 
 ```
 SKILL.md                                              # Universal root skill
 skills/engineering/professional-game-developer/
   SKILL.md                                            # Canonical skill specification
   references/
+    studio-role-taxonomy.md                           # Complete 42-role studio matrix
+    game-systems-design.md                            # Progression curves, combat frame data, economy
+    ai-behavior-systems.md                            # NavMesh, HPA*, StateTree, Utility AI, ORCA
+    vfx-particle-engineering.md                       # GPU compute particles, SPH fluids, soft depth
+    cinematics-virtual-camera.md                      # Virtual camera optics, FACS blendshapes, MoCap
+    backend-cloud-liveops.md                          # Agones/K8s servers, Glicko-2 MMR, Redis/Postgres
+    qa-automation-sdet.md                             # Headless test bots, soak testing, leak diffs
     cli-toolchains.md                                 # Headless CLI build & test recipes
     universal-architecture.md                         # DOD, fixed simulation loops, memory
     engine-selection.md                               # Engine decision tree & matrix
@@ -66,21 +85,7 @@ tests/
 
 ---
 
-## 3. Installation
-
-### Claude Code, Codex, and Agent Tools via skills.sh
-```bash
-npx skills@latest add chahat1709/professional-game-developer.skill
-```
-
-### Claude Code Plugin (Managed)
-```bash
-claude plugins add https://github.com/chahat1709/professional-game-developer.skill
-```
-
----
-
-## 4. Running Validation Tools
+## 3. Running Automated Verification
 
 ```bash
 # Run automated test suite
@@ -95,6 +100,6 @@ python3 skills/engineering/professional-game-developer/scripts/quality-gate.py -
 
 ---
 
-## 5. License
+## 4. License
 
 MIT — see [LICENSE](LICENSE).
