@@ -1,49 +1,44 @@
-# Preproduction and Planning
+# Preproduction & Risk Management — Senior Level
 
-Use this reference before starting a new game, feature, region, or major refactor.
+## 1. The One-Page Project Brief
 
-## Required brief
+Before writing code or importing 3D models, lock the core constraints in a single-page brief:
 
-Write a one-page brief containing:
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      Project Brief Contract                 │
+├─────────────────────┬───────────────────────────────────────┤
+│ Player Fantasy      │ What the player does and why it's fun │
+│ Core Loop           │ Repeatable 5-step interaction loop    │
+│ Target Platforms    │ PC / Console / Mobile / Web           │
+│ Performance Budget  │ 60 FPS (16.6ms) / 30 FPS (33.3ms)     │
+│ Input Modalities    │ Gamepad, KBM, Touch, Custom Device    │
+│ Visual Benchmark    │ 3 Art Reference Target Images         │
+│ Non-Negotiables     │ Core mechanics required for launch    │
+│ Acceptance Criteria │ Concrete, testable conditions for DoD │
+└─────────────────────┴───────────────────────────────────────┘
+```
 
-| Field | Required content |
-|---|---|
-| Player fantasy | What the player does and why it feels compelling. |
-| Core loop | The repeatable sequence from input to reward and restart. |
-| Audience and platform | Target player, hardware, input devices, resolution, and performance target. |
-| Camera and perspective | First person, third person, cockpit, top-down, cinematic, or hybrid. |
-| Visual target | Reference images, palette, materials, lighting, density, and camera examples. |
-| Systems | Movement, interactions, missions, AI, progression, UI, saving, telemetry, networking, and hardware. |
-| Content scope | Regions, levels, characters, props, effects, audio, and expected variation. |
-| Acceptance criteria | Concrete observable conditions for calling the milestone done. |
+---
 
-## Risk register
+## 2. Risk-First Engineering & The Risk Register
 
-Record each risk as:
+Junior developers start with what is easy (menus, UI layouts, placeholder scenes). Senior engineers start with what can **kill the project**:
 
-`Risk → impact → likelihood → experiment → evidence → fallback → owner`
+| Risk ID | System / Risk Description | Impact | Likelihood | Proof-of-Concept Experiment | Success Evidence Metric | Fallback Architecture |
+|---|---|:---:|:---:|---|---|---|
+| **R-01** | World streaming stalls at high flight speeds (100 m/s). | High | High | Stress-test high-speed camera traversal in empty world grid. | Max streaming frame hitch < 16.6 ms. | Reduce cell size and pre-fetch aggressive LODs. |
+| **R-02** | External controller packet jitter causes physics instability. | High | Med | Ingest noisy mock hardware serial packets into physics loop. | Deterministic PID convergence with 50ms jitter. | Low-pass filter + auto-fallback to Gamepad. |
+| **R-03** | Custom vehicle tire slip friction desyncs in multiplayer. | High | High | Run 2 headless client simulations with 150ms simulated ping. | Position divergence < 0.05m after correction. | Server authoritative rewind with client dead-reckoning. |
 
-Prioritize risks that can invalidate the architecture or schedule. Examples include imported assets with no usable collision, a physics model that cannot be controlled, streaming that fails at region transitions, an AI model that cannot run within frame budget, or external hardware that cannot maintain a stable connection.
+---
 
-## Vertical slice
+## 3. The Vertical Slice Contract
 
-Choose one compact slice that includes the real player action, representative art direction, one objective, one failure state, and a restart path. The slice should use the intended architecture and a near-final interaction feel, even if its content volume is small. Do not build four regions, ten mission types, or a large inventory before one loop is fun and reliable.
+A **Vertical Slice** is a narrow, fully finished slice of the final game containing:
+1. One fully realized environment section meeting 100% of the final visual bar (lighting, shaders, hero meshes).
+2. The complete core gameplay loop (Input ──> Action ──> Challenge ──> Feedback ──> Reward ──> Save).
+3. Production-ready audio cues, HUD feedback, and camera post-processing.
+4. Measurable frame-time stability on the minimum target specification.
 
-## Milestone contract
-
-Every milestone must state:
-
-1. What is being proved.
-2. What files, systems, and assets change.
-3. How the player or tester will observe success.
-4. What automated or runtime evidence will be captured.
-5. What is intentionally out of scope.
-6. What known limitations remain.
-
-## Change control
-
-When a user changes scope, revise the brief, risk register, asset manifest, and milestone order before implementing. Do not silently continue an obsolete plan. Separate **must ship**, **should ship**, and **later expansion** items.
-
-## Example: DroneVerse slice
-
-The first slice should be one desert flight challenge around the Mar Saba landmark: spawn the drone, apply keyboard/gamepad input, maintain stable flight, receive live telemetry, approach one pad, display SAFE/WARNING/CRITICAL landing risk, complete or fail the landing, save a flight record, and restart. City, forest, and snow regions are later content only after this loop is stable and visually credible.
+*Rule:* Never multiply content (e.g. 5 biomes, 20 vehicles, 50 missions) until the single vertical slice has satisfied all quality and performance gates.

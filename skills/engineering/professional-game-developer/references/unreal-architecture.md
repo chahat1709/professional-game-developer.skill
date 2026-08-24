@@ -1,41 +1,111 @@
-# Unreal Architecture and Input
+# Unreal Engine 5.4+ Architecture — Senior Level
 
-Use this reference when building or refactoring Unreal gameplay, input, UI, or persistent systems.
+## 1. Unreal Core Lifecycle & Class Responsibilities
 
-## Responsibility map
+Senior Unreal engineering enforces clear boundaries between lifetime-scoped objects, session data, and transient actors:
 
-| Layer | Owns | Avoid |
-|---|---|---|
-| Game Instance | Cross-level session data, save manager, online/session services, long-lived subsystems. | Per-level actors or transient world references. |
-| Game Mode | Rules, spawn policy, match/session setup, authority-side initialization. | Persistent player data or presentation logic. |
-| Game State | State visible to the current session and, when relevant, replicated shared state. | Device-specific input handling. |
-| Player State | Per-player score, progression, identity, inventory, or session stats. | Physical movement implementation. |
-| Player Controller | Human input interpretation, possession, camera/UI coordination, interaction requests. | Storing the physical player body. |
-| AI Controller | AI decisions, behavior/state trees, navigation requests, possession. | Rendering or mesh-specific logic. |
-| Pawn/Character | Physical presence, collision, movement, animation hooks, sensors, cameras. | Global rules and save data. |
-| Actor Component | Reusable capability such as health, telemetry, interaction, inventory, thrusters, or hardware input. | Unrelated cross-system orchestration. |
-| Subsystem | Lifetime-scoped service: engine, game instance, world, local player, editor, or audio. | Hidden global state without diagnostics. |
-| Data Asset/Struct | Tuning, definitions, tables, mission/vehicle/biome configuration. | Hard-coded gameplay constants scattered through code. |
-| UI/HUD | Presentation, player feedback, input prompts, debug overlays. | Owning authoritative rules. |
+| Layer | Primary Responsibility | Lifetime | Forbidden Practices |
+|---|---|---|---|
+| **`UGameInstance`** | Cross-level state, user profile, online session, save data. | Process lifetime | Never store per-level `AActor` references. |
+| **`AGameModeBase`** | Authoritative match rules, spawn policy, scoring logic. | Level/Match | Server-only. Never place client UI presentation here. |
+| **`AGameStateBase`** | Replicated match state, objective progress, match timer. | Level/Match | Never process raw player input directly. |
+| **`APlayerState`** | Per-player progression, inventory, ping, score. | Player session | Never run low-level physics simulation here. |
+| **`APlayerController`** | Input interpretation, camera management, UI coordination. | Client connection | Never store visual character meshes or physical collision. |
+| **`APawn` / `ACharacter`** | Physical body, collision, movement component, animations. | Spawn to destroy | Never store global game rules or persistence data. |
+| **`UActorComponent`** | Reusable capability (Health, Flight, Inventory, Sensor). | Actor lifetime | Avoid circular dependencies between peer components. |
+| **`USubsystem`** | Modular, managed engine/world/gameinstance service. | Subsystem scope | Avoid unobservable hidden global state. |
 
-## C++ and Blueprint boundary
+---
 
-Use C++ for deterministic simulation, physics, serialization, device protocols, subsystem contracts, reusable components, and tests. Expose safe, narrow properties and functions for tuning. Use Blueprint for level composition, visual asset assignment, animation state wiring, UI layout, and designer-facing iteration. If a rule must remain identical across many levels or platforms, keep its source of truth in C++ or a data asset.
+## 2. Gameplay Ability System (GAS)
 
-## Enhanced Input contract
+For combat, movement abilities, and complex attributes, use **GAS**:
 
-Create named Input Actions by player intent, not by physical key. Use separate Mapping Contexts for common actions, flight, cockpit, menu, camera, gamepad, and hardware-controller modes. Define Axis1D/2D/3D values, dead zones, sensitivity, inversion, smoothing, triggers, and priority. Add or remove contexts when the player changes mode. Test keyboard, mouse, gamepad, and external input independently and together.
+```cpp
+// AttributeSet Declaration with RepNotify & Macro Clamping
+UCLASS()
+class GAME_API UVehicleAttributeSet : public UAttributeSet
+{
+    GENERATED_BODY()
 
-For a drone, prefer actions such as `IA_Throttle`, `IA_Yaw`, `IA_PitchRoll`, `IA_CameraLook`, `IA_AssistLanding`, `IA_ResetDrone`, and `IA_ToggleTelemetry`. Map them to keyboard/gamepad first, then feed the same action path from ESP32 data rather than adding a second physics control implementation.
+public:
+    UPROPERTY(BlueprintReadOnly, Category = "Attributes", ReplicatedUsing = OnRep_Health)
+    FGameplayAttributeData Health;
+    ATTRIBUTE_ACCESSORS(UVehicleAttributeSet, Health)
 
-## UI and telemetry
+    UPROPERTY(BlueprintReadOnly, Category = "Attributes", ReplicatedUsing = OnRep_Energy)
+    FGameplayAttributeData Energy;
+    ATTRIBUTE_ACCESSORS(UVehicleAttributeSet, Energy)
 
-Keep HUD widgets presentation-only. A telemetry provider or view-model should expose sanitized values such as altitude, speed, battery, wind, risk, correction vector, connection state, and mission objective. The HUD should not read random component internals or recalculate authoritative physics. Add a debug mode that displays raw values, timestamps, update age, and source device.
+    virtual void PreAttributeChange(const FGameplayAttribute& Attribute, float& NewValue) override;
+    virtual void PostGameplayEffectExecute(const FGameplayEffectModCallbackData& Data) override;
+};
+```
 
-## Persistent data
+- **GameplayTags:** Use hierarchical tags (`Vehicle.State.Airborne`, `Vehicle.Debuff.EMP`) for state queries instead of brittle enums.
+- **GameplayEffects (GE):** Modify attributes via instant, duration, or infinite effects with calculation classes.
+- **Prediction Keys:** GAS handles client prediction and server rollbacks for ability activation out of the box.
 
-Use explicit save-game structures and version them. Do not serialize transient actor pointers or imported asset paths without a migration strategy. Keep telemetry logs appendable and resilient to partial sessions. Define units, coordinate systems, timestamps, and schema version in the data contract.
+---
 
-## Architecture review questions
+## 3. Mass Entity & Systemic Crowd Simulation
 
-Before implementation, answer: Which class owns the rule? Which system survives a level change? Which values are replicated or saved? What can be tested without rendering? What can be replaced without changing gameplay? What logs prove the system initialized? What happens when the input device disconnects or the asset fails to load?
+When simulating thousands of systemic entities (traffic, pedestrians, projectiles) where `AActor` overhead (transform, tick, reflection) is too costly, use **Mass Entity (UE ECS)**:
+
+- **Mass Fragments:** Lightweight POD structs (`FTransformFragment`, `FVelocityFragment`).
+- **Mass Processors:** Multithreaded tick execution over archetypes using Chunk Iterators.
+- **Smart Objects:** AI spatial query system for contextual interactions (benches, landing pads, doors).
+
+---
+
+## 4. Enhanced Input Architecture
+
+Define input by player intent, not physical keys:
+
+```
+[ Input Action: IA_Throttle ] ──> [ Input Mapping Context: IMC_Flight ] ──> [ Modifiers: DeadZone, Swizzle ]
+                                                  │
+                                                  ▼
+                               [ Trigger: Down / HoldAndRelease ]
+                                                  │
+                                                  ▼
+                               [ EnhancedInputComponent BindAction ]
+```
+
+```cpp
+void AVehiclePawn::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+    Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+    if (UEnhancedInputComponent* EnhancedInput = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+    {
+        EnhancedInput->BindAction(IA_Throttle, ETriggerEvent::Triggered, this, &AVehiclePawn::OnThrottle);
+        EnhancedInput->BindAction(IA_Steer, ETriggerEvent::Triggered, this, &AVehiclePawn::OnSteer);
+    }
+}
+```
+
+---
+
+## 5. World Partition, Data Layers & HLOD Strategy
+
+For large-scale continuous worlds:
+
+1. **Grid & Cell Size:** Configure runtime streaming cell size (e.g. 12,800 cm = 128m) based on vehicle travel speed.
+2. **Data Layers:** Group content functionally (e.g. `DL_CoreStructures`, `DL_FoliagePCG`, `DL_MissionAssets`). Activate/deactivate Data Layers at runtime without map reloads.
+3. **HLOD Layers:** Generate Hierarchical Level of Detail meshes (Instancing, Merging, or Simplified Nanite) to maintain < 1,000 draw calls at extreme draw distances.
+4. **PCG (Procedural Content Generation):** Use PCG Graphs for deterministic environment scattering, road splines, and biome blending.
+
+---
+
+## 6. Headless Automation & Gauntlet Testing
+
+- **Automation Tests:** Author `IMPLEMENT_SIMPLE_AUTOMATION_TEST` for deterministic gameplay logic.
+- **RunUAT Build Command:**
+  ```bash
+  RunUAT.sh BuildCookRun -project="$PROJECT_PATH" -noP4 -platform=Linux -clientconfig=Development -cook -build -stage -pak
+  ```
+- **Editor Headless Execution:**
+  ```bash
+  UnrealEditor-Cmd "$PROJECT_PATH" -run=Automation -test="Game.Core" -unattended -nullrhi -log
+  ```

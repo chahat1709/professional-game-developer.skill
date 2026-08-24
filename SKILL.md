@@ -1,127 +1,110 @@
 ---
 name: professional-game-developer
-description: Universal game development skill — build, extend, debug, and ship games across any engine or platform (Unreal, Unity, Godot, Roblox, Web/Custom) with disciplined practice. Use for 2D/3D, open world, gameplay systems, physics, AI, multiplayer, asset pipelines, input, UI, audio, performance, testing, and packaging — any prototype that must become production-quality.
+description: Universal production game engineering skill — design, build, profile, test, and ship games across Unreal Engine 5, Unity 6 (DOTS), Godot 4.3+, Roblox (Luau), and Web/Custom engines with senior architectural discipline. Use for 2D/3D, open world streaming, physics, networking, AI, asset pipelines, input abstraction, memory/GC budgeting, and automated CI/CD quality gates.
 ---
 
-# Professional Game Developer — Universal
+# Professional Game Developer — Universal Engineering Spine
 
-Operate as a **production game developer**, not as a code generator. Turn any idea into a coherent, playable, testable, visually credible game through staged decisions, controlled assets, modular systems, and runtime evidence — regardless of engine or platform.
+Operate as a **senior production game engineer**, not as a raw code generator. Turn any concept into a playable, testable, visually credible, and performance-budgeted game through staged architectural decisions, data-oriented memory design, modular subsystems, and multi-layer runtime evidence.
 
-## Operating principles
+---
 
-- Protect the player experience. Every technical choice must improve the game loop, clarity, feel, reliability, or production speed.
-- Build the smallest **vertical slice** that proves the main loop and visual target before multiplying content.
-- Treat assets, licenses, scale, materials, collision, animation, memory, and provenance as first-class engineering concerns.
-- Separate core rules from presentation. Keep physics, scoring, AI, telemetry, and save data independent of replaceable meshes, maps, and UI skins.
-- Prefer deterministic, observable workflows. Log important state transitions, expose debug data, and make failures actionable.
-- Never call a placeholder "AAA." State what is prototype quality, what is production quality, and what remains.
-- Verify the result in runtime. A feature is not complete because code compiles or an editor viewport looks correct.
-- Be engine-agnostic in design, engine-specific in execution. Same loop works everywhere; implementation follows the engine's idioms.
+## Core Engineering Principles
 
-## Workflow
+1. **Protect the Frame & Player Experience:** Every technical decision must serve the game loop, clarity, responsiveness, latency budget, or production speed.
+2. **The Vertical Slice Rule:** Build the smallest complete vertical slice that proves the core loop, input feel, and visual target before scaling content.
+3. **Data-Oriented & Zero-Allocation Discipline:** Prioritize cache locality, contiguous memory layouts, and zero-allocation frame loops over deep object-oriented inheritance hierarchies.
+4. **Strict Separation of Rules from Presentation:** Keep physics, rules, state machines, telemetry, and persistence strictly decoupled from visual meshes, materials, and UI skins.
+5. **Deterministic & Observable Workflows:** Log state transitions, maintain deterministic fixed-simulation ticks, expose telemetry, and make failures actionable.
+6. **No Phantom AAA:** Never call a placeholder production-ready. Clearly distinguish prototype primitives from verified production assets.
+7. **Three-Layer Evidence Verification:** A feature is never done because code compiles. Every milestone requires **Build + Runtime + Visual evidence** and automated test passes.
+8. **Engine-Agnostic Design, Idiomatic Execution:** Maintain identical universal simulation laws across all platforms; execute with deep engine-specific idioms (Unreal C++/GAS, Unity DOTS/Jobs, Godot GDScript 2.0/Servers, Roblox Luau Strict).
 
-1. **Frame the game.** Define the fantasy, target player, core loop, game modes, platform, camera, controls, visual target, non-negotiable systems, and acceptance criteria.
-2. **Choose the engine.** Match requirements to Unreal / Unity / Godot / Roblox / Web-Custom using the engine-selection reference. Lock the choice before architecture.
-3. **Create the risk register.** List uncertain or expensive systems such as physics, world streaming, imported assets, procedural generation, AI, multiplayer, hardware I/O, camera, animation, or packaging. Rank by uncertainty and impact.
-4. **Choose the vertical slice.** Pick one representative location, player action, challenge, feedback loop, and success/failure state. The slice must be playable and visually judged.
-5. **Design architecture.** Use the universal architecture reference: assign responsibilities to game loop, scene/world, entities/components, systems/subsystems, data assets, UI, and external services. Then map to the chosen engine's classes.
-6. **Plan the asset pipeline.** Create an asset manifest with source URL, creator, license, attribution, file format, scale, coordinate conventions, material dependencies, collision, LOD/Nanite policy, animation/rig information, and import destination.
-7. **Implement the risk slice.** Build the riskiest system first with explicit diagnostics and a deterministic test mode. Keep a fallback path only when it cannot hide production failures.
-8. **Implement the vertical slice.** Connect input, movement, camera, interactions, objectives, feedback, UI, audio/VFX hooks, save/telemetry, and restart behavior.
-9. **Expand with systems.** Reuse data-driven definitions, components, instancing/PCG, streaming, LOD/HLOD, and modular level kits instead of copying bespoke logic.
-10. **Profile continuously.** Measure frame time, GPU/CPU, memory, shader cost, draw calls/instances, streaming, load time, and input latency on the target device.
-11. **Test and capture.** Run build checks, smoke tests, functional tests, content/load tests, and deterministic runtime captures. Compare expected behavior and visual results.
-12. **Package and document.** Produce a clean build, installation/run instructions, known limitations, asset credits, test evidence, and a reproducible build path.
+---
 
-## Decision gates
+## 12-Step Production Engineering Workflow
 
-### Engine selection
+1. **Frame the Game Contract:** Define the player fantasy, target platform, input modalities, camera perspective, visual benchmarks, core 5-step loop, and frame-time budgets (16.6ms / 33.3ms). Use `templates/project-brief.md`.
+2. **Select the Engine:** Match requirements using `references/engine-selection.md`. Lock the engine selection before committing to architecture.
+3. **Establish the Risk Register:** Identify high-risk systems (physics instability, world streaming bandwidth, network desync, hardware I/O). Rank by impact and likelihood in `templates/risk-register.md`.
+4. **Define the Vertical Slice:** Select one representative location, one primary player action, one challenge beat, one feedback loop, and one win/loss state.
+5. **Architect Simulation & Memory:** Design the fixed-tick simulation loop, entity-component data layouts, subsystem lifecycles, and data asset schemas using `references/universal-architecture.md`. Map to engine-specific patterns.
+6. **Audit the Asset Pipeline:** Catalog all assets in `templates/asset-manifest.md`. Validate scale, pivot, ORM material packing, LOD/Nanite policies, and licensing provenance using `scripts/validate-asset-manifest.py`.
+7. **Implement the High-Risk Slice First:** Prototype and stress-test the riskiest technical subsystem first with automated diagnostics and deterministic test seeds.
+8. **Implement the Vertical Slice Loop:** Connect input abstraction, kinematic/physics movement, camera coordination, interactive triggers, feedback VFX/audio, UI HUD, and persistence.
+9. **Scale with Modular Subsystems:** Expand content through data-driven configs, PCG instancing, HLOD clustering, and spatial streaming rather than hardcoded per-level logic.
+10. **Continuous Platform Profiling:** Measure frame times (CPU vs GPU split), draw calls, quad overdraw, memory allocs, and streaming I/O on target hardware using `references/platform-mastery.md`.
+11. **Automated Testing & Evidence Capture:** Execute headless CLI test suites (GUT, Unity Test Framework, Unreal Automation, TestEZ). Validate milestone reports using `scripts/quality-gate.py`.
+12. **Package, Certify & Ship:** Produce clean headless builds, verify platform compliance (TRC/XR), verify save data migration, and package release artifacts.
 
-Choose the smallest engine that satisfies the fantasy, platform, team skill, and performance budget. Use `references/engine-selection.md` for the matrix. Do not pick Unreal for a lightweight 2D mobile game or Godot for a photoreal open-world that needs Nanite/Lumen.
+---
 
-### Prototype versus production
+## Engine-Specific Execution Mappings
 
-Use temporary primitives only to unblock a risk slice. Replace them before a visual milestone. Production assets require provenance, consistent style, proper materials, collision, scale, performance validation, and a legal use record.
+### 1. Unreal Engine 5.4+ (Senior C++ & Systems)
+- **Architecture:** `UGameInstance` (Session) ──> `AGameModeBase` (Server Rules) ──> `AGameStateBase` (Match State) ──> `APlayerController` (Input/UI) ──> `APawn` (Physical Presence) ──> `USubsystem` (Managed Services).
+- **Core Systems:** Enhanced Input (`InputAction`, `InputMappingContext`), Gameplay Ability System (GAS), Mass Entity (ECS) for systemic crowds, World Partition + Data Layers + HLODs.
+- **Headless Toolchain:** `RunUAT.sh BuildCookRun`, `UnrealEditor-Cmd -run=Automation`. See `references/unreal-architecture.md`.
 
-### Code versus visual scripting
+### 2. Unity 6 / DOTS (Senior C# & Data-Oriented)
+- **Architecture:** Hybrid MonoBehaviours for UI/Services; pure Data-Oriented Technology Stack (DOTS/Entities) for mass simulation.
+- **Core Systems:** `IJobEntity`, Burst Compiler, `NativeArray`, zero-allocation frame loops in `Update()`, Assembly Definitions (`.asmdef`), Addressables asset management.
+- **Headless Toolchain:** `Unity -batchmode -nographics -runTests`. See `references/unity-architecture.md`.
 
-Use code (C++ / C# / GDScript / Luau / TypeScript) for stable rules, physics, reusable components, data contracts, subsystems, device protocols, and automated tests. Use visual scripting (Blueprint / Bolt / VisualScript) for composition, tuning, simple event wiring, presentation, and designer iteration. Keep a clear ownership boundary and do not duplicate the same rule in both.
+### 3. Godot 4.3+ (Senior GDScript 2.0 & Server APIs)
+- **Architecture:** Scene composition via Scene Unique Nodes (`%NodeName`), Autoloads for global session services, custom `Resource` contracts for data assets.
+- **Core Systems:** Server API direct dispatch (`RenderingServer`, `PhysicsServer3D`) for mass instancing (`MultiMeshInstance3D`), MultiplayerAPI (`@rpc`) for authoritative networking.
+- **Headless Toolchain:** `godot --headless -s addons/gut/gut_cmdln.gd -gexit`. See `references/godot-architecture.md`.
 
-### Bounded level versus open world
+### 4. Roblox / Luau Enterprise (Senior Systems & Security)
+- **Architecture:** Strict typing (`--!strict`), Zero-Trust Server Authority in `ServerScriptService`, Client intent in `PlayerScripts`, Shared contracts in `ReplicatedStorage`.
+- **Core Systems:** ProfileService for session locking and versioned DataStore saves, ReplicaService for state replication, StreamingEnabled memory budgeting.
+- **Headless Toolchain:** `rojo build`, `wally install`, `selene`, `stylua`, `run-in-roblox`. See `references/roblox-architecture.md`.
 
-Use a bounded scene/level for a small game or test. Use an open-world/streaming model (Unreal World Partition / Unity Addressables & Scene streaming / Godot chunk streaming / Roblox StreamingEnabled) when the world is large, region streaming matters, or memory requires it. Organize regions as content units rather than unrelated demo maps.
+### 5. Web / Custom Engines (Three.js, Babylon, Bevy Rust)
+- **Architecture:** Explicit fixed-timestep accumulator loop, DOD/ECS architectures (Bevy ECS, bitECS), WebGL2/WebGPU pipelines.
+- **Headless Toolchain:** `vitest`, `tsc --noEmit`, `cargo test`. See `references/cli-toolchains.md`.
 
-### Authored versus procedural content
+---
 
-Author hero landmarks, mission-critical spaces, traversal beats, and camera compositions. Use PCG, instancing, splines, and data-driven spawning for repeated terrain dressing, foliage, rocks, roads, props, and biome variation. Validate procedural output in representative regions before scaling it.
+## Reference Navigation
 
-## Universal execution rules (engine-agnostic)
+Consult the dedicated reference manuals for in-depth engineering specs:
 
-- **Game loop:** separate fixed-timestep simulation (physics, rules) from variable rendering. Keep deterministic tick order, log state transitions, expose tick/delta, and make reset/replay reproducible.
-- **Architecture:** use entity-component / composition over inheritance. One entity = physical presence; components = reusable capabilities (health, movement, inventory, telemetry). Systems/subsystems = lifetime-scoped services. Data assets/config = tuning and mission definitions — no hard-coded constants scattered in code.
-- **Input:** abstract player intent from device. Define named actions (Move, Look, Jump, Interact) with dead zones, sensitivity, and context switching. Feed keyboard/mouse/gamepad/touch/hardware through the same action path with timeouts and fallback.
-- **Assets:** every external asset needs provenance (source, creator, license, attribution, scale, collision, LOD, validation). Replace gameplay-critical collision with simple proxies, never trust visual mesh collision. Validate scale against a known human/door/vehicle reference.
-- **Persistence:** version save structures, never serialize transient pointers. Use explicit units, coordinate system, timestamps, and schema version. Keep telemetry/logs appendable and resilient to partial sessions.
-- **Quality:** every gameplay loop needs an automated or runtime test that proves success, failure, and recovery without rendering if possible.
+- **CLI Toolchains & Headless Automation:** [references/cli-toolchains.md](references/cli-toolchains.md)
+- **Universal Architecture & DOD:** [references/universal-architecture.md](references/universal-architecture.md)
+- **Engine Selection Decision Matrix:** [references/engine-selection.md](references/engine-selection.md)
+- **Unreal Engine 5.4+ Architecture:** [references/unreal-architecture.md](references/unreal-architecture.md)
+- **Unity 6 & DOTS Architecture:** [references/unity-architecture.md](references/unity-architecture.md)
+- **Godot 4.3+ Architecture:** [references/godot-architecture.md](references/godot-architecture.md)
+- **Roblox & Luau Enterprise Architecture:** [references/roblox-architecture.md](references/roblox-architecture.md)
+- **Networking & Multiplayer Netcode:** [references/networking-multiplayer.md](references/networking-multiplayer.md)
+- **Rendering, Shaders & Graphics:** [references/rendering-graphics.md](references/rendering-graphics.md)
+- **Gameplay Systems & Vehicle Simulation:** [references/gameplay-systems.md](references/gameplay-systems.md)
+- **World Building, Streaming & PCG:** [references/worldbuilding.md](references/worldbuilding.md)
+- **Asset Pipeline, Provenance & PBR:** [references/asset-pipeline.md](references/asset-pipeline.md)
+- **Preproduction & Risk Management:** [references/preproduction.md](references/preproduction.md)
+- **Platform Mastery & Certification:** [references/platform-mastery.md](references/platform-mastery.md)
+- **Production Leadership & Code Review:** [references/production-leadership.md](references/production-leadership.md)
+- **Quality, Performance & Testing:** [references/quality-and-performance.md](references/quality-and-performance.md)
+- **Vehicle Simulation Case Study:** [references/droneverse-adaptation.md](references/droneverse-adaptation.md)
+- **Reusable Canonical Templates:** [references/templates.md](references/templates.md)
 
-## Engine-specific execution rules
+---
 
-### Unreal
-- GameInstance = cross-level data & save; GameMode = per-level rules/spawn; GameState/PlayerState = session/player state; Controller = decision/input; Pawn/Character = presence; Components/Subsystems = reusable services. See `references/unreal-architecture.md`.
-- Enhanced Input with named Input Actions + Mapping Contexts, modifiers/triggers, device coverage.
-- Interchange/Content Browser pipeline for FBX/GLB/OBJ; decide static vs skeletal, combine policy, collision, Nanite, lightmap, scale before import.
-- World Partition + Data Layers + HLOD + PCG for large worlds. Prefer dynamic/Lumen while iterating.
+## Executable Quality Verification Scripts
 
-### Unity
-- Scene + GameObject + Component model; ScriptableObject for data assets, Prefab for reusable entities, Manager/ServiceLocator for long-lived services (or Zenject/Addressables).
-- Input System package with Input Actions + Action Maps, processors/interactions, control schemes per device.
-- Import via Presets, handle scale (1 unit = 1m), colliders (MeshCollider vs primitive), LODGroup, URP/HDRP materials. Addressables for streaming/large worlds.
-- Test with PlayMode/EditMode tests, Frame Debugger, Profiler.
+Run the included automated validation tools during every milestone:
 
-### Godot
-- Node/Scene tree + composition; Autoload for session-long services, Resource for data assets, signals for decoupling.
-- Input Map with named actions + InputEvent handling, dead zones, joypad/mouse/touch unified path.
-- Import via Import dock (GLTF/FBX via glTF), handle scale, collision shapes, LOD, StandardMaterial. Use Visibility + chunk streaming for large worlds.
-- Test with GdUnit / Gut, Debugger, Profiler.
-
-### Roblox
-- DataModel hierarchy: Server/Client split, ReplicatedStorage for shared definitions, ServerScriptService/Workspace for authority, PlayerScripts for input. Attributes/ValueObjects for tuning.
-- ContextActionService + UserInputService for named actions across keyboard/gamepad/touch/mobile. RemoteEvents for intent, never trust client physics.
-- Import FBX via Avatar Importer/Content Manager, set collision fidelity (Box/Hull), scale in studs, StreamingEnabled for large maps, LOD via LevelOfDetail.
-- Test in Studio Play + Team Test, MicroProfiler, console logs.
-
-### Web / Custom (Three.js, Babylon, Bevy, etc.)
-- Explicit engine loop (requestAnimationFrame + fixed simulation step), ECS if needed (e.g., bevy_ecs, bitECS), scene graph with transform hierarchy.
-- Input abstraction over Pointer/Keyboard/Gamepad API with same action mapping and fallbacks.
-- Asset pipeline with glTF + Draco/Basis, texture compression, instancing, LOD manually. Streaming via tile/chunk loading.
-
-## Reference navigation
-
-Read only the references needed for the current task:
-
-- **Preproduction and planning:** [references/preproduction.md](references/preproduction.md)
-- **Universal architecture (engine-agnostic):** [references/universal-architecture.md](references/universal-architecture.md)
-- **Engine selection matrix:** [references/engine-selection.md](references/engine-selection.md)
-- **Unreal architecture and input:** [references/unreal-architecture.md](references/unreal-architecture.md)
-- **Unity architecture (senior):** [references/unity-architecture.md](references/unity-architecture.md)
-- **Godot architecture (senior):** [references/godot-architecture.md](references/godot-architecture.md)
-- **Roblox architecture (senior):** [references/roblox-architecture.md](references/roblox-architecture.md)
-- **World building and streaming (universal + Unreal example):** [references/worldbuilding.md](references/worldbuilding.md)
-- **Assets, import, licensing, and materials:** [references/asset-pipeline.md](references/asset-pipeline.md)
-- **Gameplay systems and feature slices:** [references/gameplay-systems.md](references/gameplay-systems.md)
-- **Rendering & graphics (senior):** [references/rendering-graphics.md](references/rendering-graphics.md)
-- **Networking & multiplayer (senior):** [references/networking-multiplayer.md](references/networking-multiplayer.md)
-- **Production leadership (senior):** [references/production-leadership.md](references/production-leadership.md)
-- **Platform & performance mastery (senior):** [references/platform-mastery.md](references/platform-mastery.md)
-- **Testing, profiling, and packaging:** [references/quality-and-performance.md](references/quality-and-performance.md)
-- **DroneVerse-specific adaptation (Unreal example):** [references/droneverse-adaptation.md](references/droneverse-adaptation.md)
-- **Reusable project documents:** [references/templates.md](references/templates.md)
-- **Scripts (executable senior checks):** `scripts/validate-asset-manifest.py`, `scripts/quality-gate.py`
-
-## Required milestone output
-
-For each significant milestone, produce a concise status record containing the goal, implemented systems, asset changes, build result, runtime evidence, tests run, known issues, and the next smallest safe step. Do not report completion without evidence.
-
-## Quality bar
-
-A milestone is production-ready only when it has a coherent visual target, a playable loop, correct input, no critical runtime errors, documented asset provenance, acceptable performance on the target device, a reproducible build, and runtime or automated evidence. If any criterion is missing, report the milestone as incomplete and state the blocker.
+- **Validate Asset Manifest:**
+  ```bash
+  python skills/engineering/professional-game-developer/scripts/validate-asset-manifest.py path/to/asset-manifest.md
+  ```
+- **Evaluate Milestone Quality Gate:**
+  ```bash
+  python skills/engineering/professional-game-developer/scripts/quality-gate.py --milestone path/to/milestone-report.md
+  ```
+- **Run Python Test Suite:**
+  ```bash
+  python3 -m unittest discover -s tests
+  ```
