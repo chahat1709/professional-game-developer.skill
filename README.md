@@ -6,19 +6,17 @@ A **Senior Production Game Developer & Systems Engineering Skill** for AI coding
 
 ---
 
-## 1. What This Skill Delivers
+## 1. Full Multi-Disciplinary Engineering Coverage
 
-- **Data-Oriented & Zero-Allocation Discipline:** Memory layout optimization (Structure of Arrays), cache locality, native arrays, and zero-allocation frame loops.
-- **Deep Multi-Engine Coverage:**
-  - **Unreal Engine 5.4+:** Gameplay Ability System (GAS), Mass Entity (ECS), Enhanced Input, World Partition, UAT automation.
-  - **Unity 6 & DOTS:** Entities, `IJobEntity`, Burst compiler, Assembly Definitions (`.asmdef`), Addressables memory lifecycle.
-  - **Godot 4.3+:** GDScript 2.0 static typing, direct Server API dispatches (`RenderingServer`), Scene Unique Nodes, GUT testing.
-  - **Roblox / Luau:** Strict typing (`--!strict`), Zero-Trust Server Authority, ProfileService session locking, Rojo/Wally toolchains.
-- **Headless CLI Toolchains:** Automated terminal command recipes to compile, run unit tests, and package builds in headless CI/CD pipelines without a GUI.
-- **Executable Automated Quality Gates:**
-  - Multi-format Asset Manifest Validator (`validate-asset-manifest.py`) supporting both Markdown tables and CSV files.
-  - Substantive Milestone Quality Gate (`quality-gate.py`) requiring verified Build, Runtime, and Visual evidence.
-  - Integrated unit test suite (`unittest`).
+This skill covers every specialized engineering role in modern game development:
+
+- **LookDev, Color Science & Post-Processing:** ACEScg/OCIO color pipelines, AgX tonemapping, EV100 photometric lighting calibration, ASC-CDL color grading math, Karis average bloom, and Bokeh kernel physics.
+- **Advanced Physics & Numerical Simulation:** Semi-Implicit Euler, Verlet, RK4, Extended Position Based Dynamics (XPBD), Sequential Impulse constraint solving, Continuous Collision Detection (CCD / GJK / EPA), cloth/softbody constraints, and voxel water buoyancy.
+- **3D Asset Engineering & DCC Pipelines:** Quad topology & edge flow rules, MikkTSpace normal baking, texel density standardization ($10.24 - 20.48\text{ px/cm}$), UDIMs, twist-joint skin weighting, and Quadric Error Metric (QEM) LOD generation.
+- **Animation Engineering & Kinematics:** Inertialization blending vs. crossfading, Motion Matching with PCA pose database compression, Two-Bone IK, FABRIK, procedural Foot IK ground clamping, and animation curve quantization.
+- **Spatial Audio & Sound Design:** HRTF binaural rendering (ITD/ILD/Pinna), acoustic raymarching occlusion/diffraction, dynamic music state machines (horizontal re-sequencing & vertical layering), and DSP voice pooling.
+- **Multiplayer & Netcode:** Client-side prediction with ring buffers, server rollback reconciliation, lag-compensated hit history rewinding, bitpacked delta compression, and spatial interest management grids.
+- **Tools Engineering & Technical Direction:** Automated DCC asset ingestion daemons, Pixar Universal Scene Description (USD) pipelines, BC5/BC7/ASTC texture compression, and symbolicated crash telemetry.
 
 ---
 
@@ -36,6 +34,12 @@ skills/engineering/professional-game-developer/
     unity-architecture.md                             # Unity 6 DOTS, Burst, asmdef, Addressables
     godot-architecture.md                             # Godot 4.3+ GDScript 2.0, Server APIs, GUT
     roblox-architecture.md                            # Luau strict, ProfileService, Rojo, Wally
+    lookdev-color-grading.md                          # ACEScg, AgX tonemap, EV100 lighting, DoF
+    advanced-physics-simulation.md                    # XPBD, CCD, GJK/EPA, constraints, buoyancy
+    3d-modeling-technical-art.md                      # Quad topology, texel density, rigging, LODs
+    animation-engineering.md                          # Motion matching, inertialization, Foot IK
+    audio-engineering-spatial.md                      # HRTF, binaural, occlusion, dynamic music
+    tools-pipeline-technical-direction.md             # USD pipeline, automated DCC, BC7/ASTC
     networking-multiplayer.md                         # Prediction, rollback, lag compensation
     rendering-graphics.md                             # Forward+/Deferred, CSM/VSM, Hi-Z, overdraw
     gameplay-systems.md                               # Pacejka vehicle physics, ragdolls, AI/BT
@@ -72,11 +76,6 @@ npx skills@latest add chahat1709/professional-game-developer.skill
 ### Claude Code Plugin (Managed)
 ```bash
 claude plugins add https://github.com/chahat1709/professional-game-developer.skill
-```
-
-### Direct Clone
-```bash
-git clone https://github.com/chahat1709/professional-game-developer.skill
 ```
 
 ---
