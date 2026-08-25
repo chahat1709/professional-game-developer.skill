@@ -1,6 +1,6 @@
 ---
 name: professional-game-developer
-description: Universal production game engineering skill — design, build, profile, test, and ship games across Unreal Engine 5, Unity 6 (DOTS), Godot 4.3+, Roblox (Luau), and Web/Custom engines with senior studio-grade architectural discipline. Encompasses all 42 specialized game studio job roles across 6 departments: Game Design & Systems, Core Engineering, LookDev & Technical Art, Animation & Cinematics, Spatial Audio, and Production & QA Automation.
+description: "Universal production game engineering skill — design, build, profile, test, and ship games across Unreal Engine 5, Unity 6 (DOTS), Godot 4.3+, Roblox (Luau), and Web/Custom engines with senior studio-grade architectural discipline. Encompasses all 42 specialized game studio job roles across 6 departments: Game Design & Systems, Core Engineering, LookDev & Technical Art, Animation & Cinematics, Spatial Audio, and Production & QA Automation."
 ---
 
 # Professional Game Developer — Universal Multi-Disciplinary Engineering Spine
