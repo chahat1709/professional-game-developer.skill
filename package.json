@@ -1,20 +1,27 @@
 {
   "name": "professional-game-developer-skill",
-  "version": "1.0.0",
-  "description": "Universal Professional Game Developer skill for coding agents — Unreal, Unity, Godot, Roblox, Web",
+  "version": "2.0.0",
+  "description": "Universal Senior Game Developer & Systems Engineering Skill for AI Agents — Unreal 5.4+, Unity 6 (DOTS), Godot 4.3+, Roblox (Luau), Web/Custom",
   "repository": {
     "type": "git",
     "url": "https://github.com/chahat1709/professional-game-developer.skill"
   },
+  "scripts": {
+    "test": "python3 -m unittest discover -s tests",
+    "validate:manifest": "python3 skills/engineering/professional-game-developer/scripts/validate-asset-manifest.py templates/asset-manifest.md",
+    "validate:gate": "python3 skills/engineering/professional-game-developer/scripts/quality-gate.py --milestone templates/milestone-report.md"
+  },
   "license": "MIT",
   "keywords": [
     "game-development",
-    "skill",
+    "unreal-engine-5",
+    "unity-dots",
+    "godot-4",
+    "roblox-luau",
+    "data-oriented-design",
     "claude-code",
     "opencode",
-    "unreal-engine",
-    "unity",
-    "godot",
-    "roblox"
+    "senior-engineering",
+    "quality-gates"
   ]
 }

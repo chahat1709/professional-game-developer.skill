@@ -1,41 +1,46 @@
-# DroneVerse Adaptation
+# Vehicle Simulation Case Study: Flight & Quadrotor Systems
 
-Use this reference when applying the professional-game-developer skill to DroneVerse or a similar drone simulator.
+Use this reference as a concrete practical case study for implementing high-performance vehicle simulation, telemetry streaming, external hardware I/O (e.g. ESP32), and landing prediction in Unreal Engine 5 or custom physics pipelines.
 
-## Product spine
+---
 
-DroneVerse is a realistic quadrotor simulator with a flyable drone, multiple open-world regions, landing-zone challenges, assisted landing prediction, telemetry logging, and keyboard/gamepad/ESP32 control. The player loop is: select a region or mission, launch, fly under environmental and control constraints, read telemetry and guidance, approach a landing zone, land safely or recover, review results, and improve.
+## 1. Physical Architecture Contract
 
-## Architecture contract
+- **`AVehiclePawn` / `ADronePawn`:** Authoritative owner of aerodynamic forces, thruster torques, motor RPM integration, and collision resolution.
+- **`VehicleInputComponent`:** Normalizes inputs across multiple input modalities (Keyboard, Gamepad, Touch, External Serial/ESP32) into unified continuous action vectors `(-1.0 to 1.0)`.
+- **`LandingZoneActor`:** Independent collision volume responsible for touchdown evaluation, slope angle calculation, and scoring.
+- **`TelemetrySubsystem`:** Samples flight kinematics at fixed intervals (e.g. 50 Hz) and streams JSON/binary records to analytics sinks.
 
-Keep `ADronePawn` as the flight/physics owner. Keep `DroneVerseGameMode` responsible for session startup and spawn rules. Keep `WorldBootstrapActor` or its replacement responsible for region bootstrap only. Keep `LandingZoneActor` responsible for collision and touchdown evaluation. Keep `LandingPredictionSubsystem` responsible for prediction contract and fallback. Keep `FlightTelemetrySubsystem` responsible for samples, events, landing outcomes, and export. Keep ESP32 input behind a dedicated subsystem/component that feeds the same normalized control path as keyboard/gamepad.
+---
 
-Visual meshes, imported maps, materials, pilot characters, and UI must be replaceable without changing flight physics or landing evaluation. Use gameplay collision proxies rather than trusting the imported Mar Saba visual mesh or imported landing pad collision.
+## 2. Assisted Landing & Prediction Subsystem
 
-## Region plan
+When implementing AI or heuristic-based assisted landing:
 
-- **Mar Saba Desert:** first polished vertical slice. Use the supplied FBX as a hero landmark after controlled import. Surround it with authored approach routes, landing pads, desert terrain materials, cliffs, roads/trails, beacons, and mission markers.
-- **High-Class City:** dense but performance-bounded modern district with rooftops, helipads, roads, skyline landmarks, wind corridors, and urban landing challenges.
-- **Natural Open World:** larger PCG-dressed exploration region with varied terrain, vegetation, cliffs, water/river or canyon features, and long-range flight routes.
-- **Snow Mountains:** high-altitude terrain, snow materials, ridges, mountain passes, strong wind, reduced visibility, snow VFX, and precision landing missions.
+```
+[ Altitude & Velocity Sensors ] ──> [ Landing Prediction Subsystem ]
+                                                │
+                                    ┌───────────┴───────────┐
+                                    ▼                       ▼
+                         [ Heuristic Safety Check ] [ Neural Model Inference ]
+                                    │                       │
+                                    └───────────┬───────────┘
+                                                ▼
+                                    [ State: SAFE / WARNING / CRITICAL ]
+                                                │
+                                    [ HUD / Viewport Overlay ]
+```
 
-Use World Partition/Data Layers/PCG/HLOD when the regions are combined. Keep a compact desert mission map as a fallback for testing and demonstration.
+- **Deterministic Fallback:** If inference fails or drops below latency thresholds (>20 ms), fall back to deterministic kinematic safety rules immediately.
+- **Touchdown Metrics:** Evaluate landing quality using:
+  - Vertical Descent Rate: $< 1.5 \text{ m/s}$ (Safe), $1.5 - 3.0 \text{ m/s}$ (Warning), $> 3.0 \text{ m/s}$ (Critical / Crash).
+  - Pitch / Roll Deviation: $< 5.0^\circ$ from horizontal plane.
+  - Horizontal Radial Offset: Distance from landing pad center origin.
 
-## Assisted landing contract
+---
 
-Telemetry schema must include stable units and timestamps for position, velocity, acceleration, altitude, vertical speed, distance to pad, horizontal error, attitude, wind, battery, control input, and model status. The prediction result must include `SAFE`, `WARNING`, or `CRITICAL`, confidence/quality, correction direction, reason code, and timestamp. If inference is unavailable or stale, use deterministic safety rules and mark the source as fallback.
+## 3. External Hardware I/O Integration (ESP32 / Serial Protocol)
 
-## Visual quality bar
-
-Do not ship the current primitive scene as the visual target. Each region needs a coherent hero shot, working dynamic lighting/atmosphere, authored landmarks, materials with believable response, readable landing zones, an intentional camera, and enough environmental context to communicate scale. Prebuilt assets are acceptable and preferred when licensed and integrated consistently.
-
-## Milestone order
-
-1. Import and validate Mar Saba FBX; fix scale, axes, materials, collision, Nanite/LOD, and pivot.
-2. Build one desert landing challenge around the landmark with runtime lighting and a strong camera shot.
-3. Add the landing HUD and telemetry overlay to the desert slice.
-4. Add functional tests for flight startup, landing evaluation, prediction fallback, and telemetry export.
-5. Add the city, natural, and snow regions as authored/PCG content units.
-6. Add ESP32 packet input and disconnect fallback.
-7. Profile high-speed flight, streaming, PCG density, and GPU/CPU budgets.
-8. Package and capture the final demo.
+- **Protocol:** Ingest fixed-size binary packets (e.g. 32-byte frames with sync header `0xAA55` and CRC16 checksum).
+- **Asynchronous Threading:** Poll serial port in a dedicated background worker thread; push validated control frames into a thread-safe ring buffer.
+- **Watchdog Timer:** If no valid packet is received for $> 100 \text{ ms}$, flag device disconnect and transition smoothly to gamepad/keyboard control.

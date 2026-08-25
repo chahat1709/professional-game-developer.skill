@@ -1,47 +1,67 @@
-# World Building and Streaming
+# Open World Building & Streaming Architecture — Senior Level
 
-Use this reference for landscapes, open worlds, biomes, region transitions, procedural dressing, and large-map performance.
+## 1. World Partitioning & Streaming Models
 
-## Select the world model
+Large-scale open worlds must manage disk I/O, CPU decompression, and VRAM memory budgets simultaneously.
 
-Use a bounded level for a small scene or test. Use the Open World template and World Partition for large continuous worlds, distant regions, or runtime streaming. Keep one persistent world when travel, shared progression, and spatial continuity matter. Use separate maps only when isolation, load-time separation, or fundamentally different game rules justify them.
+```
+┌─────────────────────────────────────────────────────────────┐
+│                 Continuous Streaming Hierarchy              │
+├─────────────────┬─────────────────┬─────────────────────────┤
+│ Active Radius   │ 0 - 250m        │ High-detail meshes,     │
+│ (Memory Loaded) │                 │ dynamic collision, AI   │
+├─────────────────┼─────────────────┼─────────────────────────┤
+│ Streaming Grid  │ 250m - 1,000m   │ Mid-tier LODs, static   │
+│ (Async Loading) │                 │ collision, PCG props    │
+├─────────────────┼─────────────────┼─────────────────────────┤
+│ Distant World   │ 1,000m - 5,000m+│ HLOD clusters,          │
+│ (Virtual Cache) │                 │ imposter billboards     │
+└─────────────────┴─────────────────┴─────────────────────────┘
+```
 
-## Region model
+### High-Speed Traversal Budgeting:
+- When calculating cell loading budgets, evaluate at the **fastest travel velocity** (e.g. supersonic jet or high-speed vehicle at 100+ m/s), not walking speed.
+- If a vehicle moves at 100 m/s and cell size is 250m, a new cell must stream from disk and initialize in `< 2.5 seconds` without causing a rendering frame drop.
 
-Design each region as a spatial and production unit with:
+---
 
-- a region boundary and streaming/load radius;
-- a visual identity, terrain/material palette, weather, time-of-day role, and audio profile;
-- hero landmarks, mission spaces, flight corridors, hazards, and landing zones;
-- a Data Layer or explicit content grouping;
-- an HLOD strategy and performance budget;
-- entry/exit routes and a safe fallback if streaming is delayed.
+## 2. Hierarchical LOD (HLOD) & Imposter Generation
 
-For a four-region world, use a single World Partition world where possible. Place the Mar Saba desert landmark in a desert Data Layer, then organize the city, natural exploration, and snow mountain zones as separate Data Layers or spatial regions. Do not scatter region logic through Level Blueprint references that force every actor to load.
+Distant vistas contain millions of polygons and thousands of unique draw calls that destroy GPU performance:
 
-## World Partition checklist
+1. **Instanced HLOD:** Group identical static meshes (e.g. rocks, trees) within a streaming cell into a single instanced draw call.
+2. **Merged HLOD:** Merge distinct adjacent geometry (e.g. building facades, walls) into a simplified mesh with combined texture atlases.
+3. **Imposter Billboards (Octahedral Imposters):** For ultra-distant foliage and structures (>1,500m), render 2D camera-facing octahedral sprites with depth offset.
 
-1. Create or convert an Open World level.
-2. Confirm World Partition, One File Per Actor, Data Layers, and HLOD support.
-3. Choose a runtime grid and cell size based on target hardware and travel speed.
-4. Set streaming sources for the player, teleport destinations, missions, and cinematic cameras.
-5. Use editor regions or Location Volumes so work remains focused and responsive.
-6. Validate load/unload transitions at the fastest expected player speed.
-7. Build minimap data and HLODs before large-scale profiling.
-8. Run cooking/packaging tests with the actual target map list.
+---
 
-## PCG and authored content
+## 3. Procedural Content Generation (PCG) & Biome Scattering
 
-Use authored placement for hero landmarks, mission-critical pads, roads, vistas, and camera compositions. Use PCG for rocks, vegetation, debris, minor props, and biome variation. Assign generated content to the intended Data Layer and HLOD Layer. Prototype a PCG graph in a small representative region, inspect density and collisions, then scale it. Do not generate decorative content everywhere before confirming memory and streaming behavior.
+Do not hand-place thousands of minor environment props:
 
-## Biome design
+```
+[ Landscape Heightmap & Splines ] ──> [ Biome Rule Matrix ] ──> [ Spatial Sampler / Poisson Disk ]
+                                                                        │
+                                                               ┌────────┴────────┐
+                                                               ▼                 ▼
+                                                      [ Raycast to Surface ] [ Density Mask ]
+                                                               │
+                                                               ▼
+                                                      [ GPU Instance Spawner ]
+```
 
-Define a biome data record containing terrain material, foliage/prop sets, scatter rules, weather, wind, fog, ambient color, mission tags, and landing-risk modifiers. Reuse the same graph with parameters rather than duplicating graphs per region. Maintain a visual hierarchy: silhouette landmarks first, traversal routes second, medium props third, micro-detail last.
+- **Poisson Disk Sampling:** Enforce minimum distance between scattered instances to prevent unnatural prop overlapping.
+- **Surface Normal Alignment:** Align foliage/props to landscape slope normals with configurable pitch limits (e.g. trees grow vertically; rocks cling to cliff faces).
+- **Collision Proxies:** Generate collision only for instances within the immediate player radius; distant PCG instances must have physics collision disabled.
 
-## Lighting and atmosphere
+---
 
-Use a deliberate outdoor lighting stack: directional sun, skylight, sky/atmosphere, exponential height fog, clouds, exposure, and post-process settings. Prefer movable/dynamic lighting during procedural development and runtime demos. Keep static-lighting warnings out of captured milestones. Establish one lighting reference shot per region and compare region transitions under the intended time-of-day policy.
+## 4. Lighting, Atmosphere & Dynamic Time-of-Day
 
-## Performance gates
+A senior outdoor lighting stack combines 5 coordinated layers:
 
-Measure visible and loaded cell counts, streaming hitches, HLOD transitions, PCG actor counts, instance counts, landscape complexity, shader cost, memory, and frame time. Test high-speed flight because a drone can cross cells faster than a walking character. Use debug runtime hash views and streaming logs when diagnosing region issues.
+1. **Directional Sun/Moon:** Primary light source with dynamic Cascaded Shadow Maps or Virtual Shadow Maps.
+2. **Sky Atmosphere & Fog:** Rayleigh and Mie scattering models for physical sky color, horizon hazing, and volumetric fog.
+3. **Skylight / Ambient GI:** Real-time global illumination capture (Lumen / Light Probes / Ambient Spherical Harmonics).
+4. **Volumetric Clouds:** Multi-octave raymarched 3D noise textures for dynamic cloud shadows and light shafts.
+5. **Post-Process Volume:** Auto-exposure (eye adaptation), physical camera aperture/ISO, color grading LUTs.

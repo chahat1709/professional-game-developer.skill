@@ -1,49 +1,65 @@
-# Asset Pipeline
+# Asset Pipeline & Technical Validation — Senior Level
 
-Use this reference whenever acquiring, importing, replacing, or packaging art assets.
+## 1. Asset Manifest Schema & Provenance
 
-## Asset manifest
+Every external 3D mesh, texture, audio file, or animation must be cataloged in the project **Asset Manifest** before entering the production repository.
 
-Track every external asset in a manifest:
+### Canonical Manifest Schema (11 Fields):
 
-| Field | Example |
-|---|---|
-| Asset ID | `DroneVerse_DronePilot_01` |
-| Source URL | Official listing or creator page. |
-| Creator/publisher | Name for credit. |
-| License | Exact license and permitted use. |
-| Attribution | Required credit text and location. |
-| Download date | Date and version. |
-| Original format | FBX, GLB, OBJ, USD, texture pack, or plugin. |
-| Import destination | `/Game/DroneVerse/...` |
-| Scale/axes | Centimeters, forward/up axes, origin, pivot. |
-| Materials/textures | Dependencies and replacement plan. |
-| Collision | Auto, custom UCX, simple primitives, or gameplay proxy. |
-| Rig/animation | Skeleton, physics asset, retargeting, clips. |
-| Nanite/LOD | Enabled policy and exceptions. |
-| Memory/performance | Triangle count, texture size, instances, load behavior. |
-| Validation | Import result, visual check, runtime check. |
+| Field | Description | Example |
+|---|---|---|
+| **Asset ID** | Unique project identifier following naming conventions. | `SM_Rock_Granite_01` |
+| **Source** | Origin URL or DCC source package location. | `https://ambientcg.com/a/Rock01` |
+| **Creator** | Original artist, studio, or publisher name. | `ambientCG` |
+| **License** | Legal license terms governing project distribution. | `CC0-1.0` / `Custom Commercial` |
+| **Attribution** | Exact attribution string required for project credits. | `Rock 01 by Lennart Demes (CC0)` |
+| **Format** | Source interchange format. | `GLB` / `FBX` / `PNG` / `WAV` |
+| **Destination** | Project engine content path. | `/Content/Environment/Rocks` |
+| **Scale** | Coordinate units, orientation, and scaling factor. | `1.0 (cm, Z-Up)` |
+| **Collision** | Physics collision strategy. | `UCX Simplified Hull` / `Box Proxy` |
+| **Nanite/LOD** | LOD / Virtual geometry policy. | `Nanite Enabled (Falloff LOD3)` |
+| **Validation** | Verification result from test import and gameplay check. | `Pass` |
 
-## Acquisition and licensing
+---
 
-Prefer Fab, Quixel/Megascans, user-supplied files, or clearly licensed assets. A visible download button does not prove the license permits a packaged commercial or public game. Preserve the original URL, creator, license text, and attribution in the project. Never bypass login, paywalls, or access controls. If the license is unclear, use the asset only as a reference and ask the user to supply a permitted file.
+## 2. Naming Conventions & Hierarchy
 
-## Import checklist
+Enforce strict prefixing to ensure asset registries and search filters function reliably:
 
-Before import, determine whether the asset is static or skeletal, whether meshes should combine, whether materials/textures are included, whether the scale and axes are correct, whether collision is available, and whether the target supports Nanite. Use Interchange or the Content Browser with explicit settings. For dense static environment meshes, evaluate Build Nanite; for dynamic/Lumen worlds, avoid generating lightmap UVs unless baked lighting requires them. For skeletal characters, import geometry/skin weights, create a physics asset when needed, verify reference pose, and retarget animations deliberately.
+- `SM_` : Static Mesh (`SM_Building_Door_01`)
+- `SK_` : Skeletal Mesh (`SK_Character_Pilot`)
+- `M_`  : Master Material (`M_Opaque_PBR_Master`)
+- `MI_` : Material Instance (`MI_Vehicle_Chassis_Red`)
+- `T_`  : Texture (`T_Rock_Granite_01_D` / `_N` / `_ORM`)
+- `A_`  : Audio / Sound Cue (`A_Engine_Turbine_Loop`)
+- `VFX_`: Niagara / Particle System (`VFX_Thruster_Flame`)
+- `BP_` / `WBP_`: Blueprint / Widget Blueprint (`BP_Vehicle_Base`, `WBP_HUD_Telemetry`)
 
-## Collision and gameplay proxies
+---
 
-Do not rely on visual mesh collision for mission-critical gameplay. Use custom simple collision, UCX collision, or separate gameplay volumes for landing pads, drone flight barriers, triggers, and interaction zones. Keep a visual imported pad mesh independent of `LandingZoneActor` evaluation and keep the drone’s physics body independent of its render mesh.
+## 3. Texture Channel Packing & Optimization
 
-## Materials and scale
+Packing multiple single-channel maps into a single RGBA texture saves 66% of texture memory and drastically cuts GPU texture sampling bandwidth:
 
-Validate physically plausible material response, texture color space, normal-map orientation, roughness/metallic channels, tiling, UV scale, and exposure. Measure the imported asset against a known human/drone/door size. Fix pivot and orientation in the source or import settings rather than compensating with unexplained runtime transforms.
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    ORM Channel Packing Standard             │
+├───────────────┬───────────────────────────────┬─────────────┤
+│ Channel R     │ Ambient Occlusion (AO)        │ Linear      │
+│ Channel G     │ Roughness                     │ Linear      │
+│ Channel B     │ Metallic                      │ Linear      │
+│ Channel A     │ Height / Displacement / Opacity│ Linear      │
+└───────────────┴───────────────────────────────┴─────────────┘
+```
 
-## Optimization policy
+- **Resolution Powers of Two:** All runtime textures must be power-of-two (e.g. 512x512, 1024x1024, 2048x2048) to allow hardware MIP-map generation and GPU block compression (BC1/BC3/BC7 on Desktop, ASTC/ETC2 on Mobile).
 
-Use Nanite for supported high-detail static meshes when profiling supports it. Use instancing for repeated props and PCG output. Reduce material slots, texture resolution, shader permutations, and unnecessary skeletal complexity. Create LOD or fallback policies for assets that cannot use Nanite. Profile the real camera path and the worst-case loaded region.
+---
 
-## Attribution delivery
+## 4. Collision Proxies vs. Visual Meshes
 
-Maintain a generated credits document or in-game credits entry. Include creator, source URL, license, and required wording. Do not silently redistribute source files in a public repository when the license does not permit it; package only the derived/imported content allowed by the terms.
+**Senior Golden Rule:** Never use visual render geometry for critical physics collision.
+
+1. **Visual Mesh:** Contains bevels, decorative greebles, and micro-polygons.
+2. **Collision Proxy:** Use simple primitive colliders (Box, Capsule, Sphere) or low-poly convex hulls (`UCX_MeshName`).
+3. **Gameplay Triggers:** Use dedicated invisible collision volumes for interaction zones, checkpoints, and landing pads.

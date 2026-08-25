@@ -1,30 +1,43 @@
-# Platform & Performance Mastery
+# Platform Mastery & Certification Gates — Senior Level
 
-Senior ships on the target device, not on the dev PC.
+A senior engineer targets the real hardware platform from Day 1, not a high-end development PC.
 
-## Budgets (lock before content)
+---
 
-- **Frame:** 60 Hz (16.6 ms) or 30 Hz (33.3 ms). Split CPU/GPU. If CPU > 8 ms, fix simulation/AI/physics; if GPU > 10 ms, fix shadows/materials/overdraw.
-- **Memory:** define texture pool, mesh, audio, and code budgets per platform. On console/mobile, profile on device — PC profile lies.
-- **Load:** cold start < 15 s, level transition < 5 s, hitch < 100 ms. Streaming budget = max actors/cells loaded at fastest traversal.
+## 1. Frame-Time & Memory Budgets by Platform
 
-## Platform gates
+| Target Platform | Frame Target | Total Frame Budget | CPU Sim Budget | GPU Render Budget | Target RAM / VRAM Budget |
+|---|:---:|:---:|:---:|:---:|:---:|
+| **PC (Mid Spec - GTX 1660 / RTX 3060)** | 60 FPS | 16.6 ms | <= 7.0 ms | <= 8.5 ms | 6.0 GB RAM / 4.0 GB VRAM |
+| **Current-Gen Console (PS5 / Xbox Series X)**| 60 FPS | 16.6 ms | <= 6.0 ms | <= 9.0 ms | 10.0 GB Unified Memory |
+| **Mobile (iOS / Android Mid-Tier)** | 30 / 60 FPS| 33.3 / 16.6 ms | <= 10.0 ms | <= 12.0 ms | 1.8 GB RAM / Low Thermal Draw |
+| **Web (WebGL2 / WebGPU)** | 60 FPS | 16.6 ms | <= 5.0 ms | <= 9.0 ms | 512 MB Heap / 50 MB Assets |
 
-- **Console (TRC/XR):** handle suspend/resume, controller disconnect, save corruption, age rating, crash reporting. Test on devkit with retail settings.
-- **Mobile (iOS/Android):** handle interrupt (call), thermal throttle, low-memory kill, permission flow, store review (privacy, IAP). Test on low-end device, not flagship.
-- **PC:** handle window resize, alt-tab, driver variance, settings scalability (Low→Epic must not crash). Verify on min spec.
-- **Roblox/Web:** handle StreamingEnabled / asset streaming, rate limits, moderation, battery/thermal on mobile browsers.
+---
 
-## Profiling (senior loop)
+## 2. Platform Certification & Compliance Gates
 
-1. Play worst-case path at max speed.
-2. Capture: frame time, GPU pass cost, draw calls, instance counts, texture pool, streaming cells, physics time, memory.
-3. Fix the top 1–2 hotspots, re-profile. Repeat. Do not micro-optimize before profiling.
+### Console Requirements (Sony TRC / Microsoft XR):
+- **Controller Disconnect:** If an active wireless controller disconnects during gameplay, immediately trigger pause menu with reconnect prompt.
+- **Suspend / Resume:** Game state must recover cleanly from OS suspend/sleep mode without crashing audio/graphics threads.
+- **Save Data Resilience:** Corrupted save files must be detected with checksum validation and fail gracefully without crashing the application.
+- **Loading Screen Standards:** Any load screen > 2 seconds must display animated UI progress to prove the process is alive.
 
-## Certification checklist
+### Mobile Requirements (Apple App Store / Google Play):
+- **Thermal Throttling Defense:** If device temperature triggers thermal throttling, automatically drop dynamic resolution scaling (DRS) or cap frame rate to 30 FPS to prevent hardware shutdown.
+- **Interruption Handling:** Handle phone calls, backgrounding, and lock-screen transitions with automatic game pause and state caching.
+- **Cold Boot Time:** Cold launch to interactive title screen must take `< 10 seconds`.
 
-- [ ] Clean launch, no critical errors, correct version/build id on screen.
-- [ ] All inputs work, fallback on disconnect, no soft-lock.
-- [ ] Saves migrate across versions, corrupted save recovers gracefully.
-- [ ] Performance at budget on min spec/target device in worst region.
-- [ ] Asset credits complete, licenses respected, no banned content.
+---
+
+## 3. Profiling Execution Loop
+
+```
+1. Run target build on real target hardware (DevKit / Physical Phone / Min-Spec PC).
+2. Record worst-case gameplay sequence (e.g. maximum particle combat inside dense foliage region).
+3. Identify the Primary Bottleneck:
+   - CPU Bound: Optimize physics broadphase, script allocations, AI pathfinding queries, or tick rates.
+   - GPU Bound: Optimize shadow cascade splits, quad-overdraw, translucent blending, or shader ALU ops.
+   - Memory Bound: Downscale texture MIP-maps, compress meshes, enable mesh streaming or GC pooling.
+4. Verify fix with direct before/after frame-time deltas (in milliseconds).
+```
